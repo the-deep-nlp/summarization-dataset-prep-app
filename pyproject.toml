@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "summ-dataprep"
+version = "0.1.0"
+description = ""
+authors = ["dev <nlp@thedeep.io>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.9.7 || >3.9.7,<4.0"
+boto3 = "==1.26.106"
+pandas = "*"
+psycopg2-binary = "*"
+streamlit = "==1.22.0"
+streamlit-aggrid = "*"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
