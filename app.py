@@ -4,11 +4,16 @@ from st_aggrid import (
     AgGrid,
     GridUpdateMode,
     ColumnsAutoSizeMode,
-    AgGridTheme
+    AgGridTheme,
+    DataReturnMode
 )
 from gridoptions import go, go_dump
 
 st.set_page_config(layout="wide")
+data_df = pd.DataFrame({"abc":[" "], "xyz": [" "], "efg": [" "]})
+data_dump_df = pd.DataFrame(
+    {"anecdotal":[" "], "too_old": [" "], "redundant":[" "], "outliers": [" "]}
+)
 
 with st.form("summ_tagging", clear_on_submit=True):
     project_options = ["ProjectE", "ProjectB", "ProjectC", "ProjectR"]
@@ -23,38 +28,38 @@ with st.form("summ_tagging", clear_on_submit=True):
 
     published_date = st.date_input("Published on")
 
-    data_df = pd.DataFrame({"abc":["a"], "xyz": ["a"], "efg": ["a"]})
-
     response = AgGrid(
         data_df,
         gridOptions=go,
         update_mode=GridUpdateMode.VALUE_CHANGED,
+        data_return_mode=DataReturnMode.AS_INPUT,
         allow_unsafe_jscode=True,
         height=400,
         width="100%",
+        enable_enterprise_modules=True,
         theme=AgGridTheme.STREAMLIT,
         columns_auto_size_mode=ColumnsAutoSizeMode.FIT_ALL_COLUMNS_TO_VIEW,
         wrapText=True,
-        key='first'
+        key='first',
+        reload_data=True
     )
 
     # st.write(response)
     #st.dataframe(response["data"])
     # selected_rows = response["selected_rows"]
     # st.write(selected_rows)
-
-    data_dump_df = pd.DataFrame({"anecdotal":["a"], "too_old": ["a"], "redundant":["a"], "outliers": ["a"]})
-
     response_dump = AgGrid(
         data_dump_df,
         gridOptions=go_dump,
         allow_unsafe_jscode=True,
         height=400,
         width="100%",
+        enable_enterprise_modules=True,
         theme=AgGridTheme.STREAMLIT,
         columns_auto_size_mode=ColumnsAutoSizeMode.FIT_ALL_COLUMNS_TO_VIEW,
         wrapText=True,
-        key='second'
+        key='second',
+        reload_data=True
     )
 
     other_info = st.text_input("Other Info", help="Provide extra details if any")
@@ -64,6 +69,9 @@ with st.form("summ_tagging", clear_on_submit=True):
     if submit_btn:
         st.write("Submitted")
         st.dataframe(response["data"])
+        st.write(response.keys())
+        #st.experimental_rerun()
+
 
 #st.write(response_dump)
 

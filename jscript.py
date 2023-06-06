@@ -80,7 +80,7 @@ function(e) {
 };
 """
 )
-                    
+
 js_remove_row = JsCode("""
 function(e) {
     let api = e.api;
