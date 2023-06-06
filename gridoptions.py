@@ -8,7 +8,6 @@ from jscript import (
 )
 
 gb = GridOptionsBuilder()
-
 gb.configure_pagination(enabled=True)
 
 gb.configure_column(
@@ -58,10 +57,12 @@ gb.configure_default_column(
     editable=True
 )
 gb.configure_selection(selection_mode="single", use_checkbox=True)
+gb.configure_grid_options(stopEditingWhenCellsLoseFocus=True, headerHeight=80, rowHeight=30)
 go = gb.build()
 
 
 gb_dump = GridOptionsBuilder()
+gb_dump.configure_pagination(enabled=True)
 gb_dump.configure_column(
     field="anecdotal",
     header_name="Anecdotal",
@@ -119,4 +120,5 @@ gb_dump.configure_default_column(
     editable=True
 )
 gb_dump.configure_selection(selection_mode="single", use_checkbox=True)
+gb_dump.configure_grid_options(stopEditingWhenCellsLoseFocus=True, headerHeight=80, rowHeight=30)
 go_dump = gb_dump.build()
