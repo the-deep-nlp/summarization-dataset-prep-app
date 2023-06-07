@@ -11,7 +11,7 @@ gb = GridOptionsBuilder()
 gb.configure_pagination(enabled=True)
 
 gb.configure_column(
-    field="abc",
+    field="analytical_statement",
     header_name="Analytical Statement",
     type=["string"],
     wrapHeaderText=True,
@@ -19,21 +19,22 @@ gb.configure_column(
     autoHeight=True
 )
 gb.configure_column(
-    field="xyz",
+    field="comp_prev_months",
     header_name="Comparison with previous months",
     wrapHeaderText=True,
     wrapText=True,
     autoHeight=True
 )
 gb.configure_column(
-    field="efg",
+    field="evidence",
     header_name="Evidence",
     wrapHeaderText=True,
     wrapText=True,
     autoHeight=True
 )
 gb.configure_column(
-    field="Add row",
+    field="add_row",
+    header_name="Add Row",
     onCellClicked=js_add_row,
     cellRenderer=cellRenderer_addButton,
     lockPosition='right',
@@ -42,7 +43,8 @@ gb.configure_column(
     autoHeight=True
 )
 gb.configure_column(
-    field="Delete row",
+    field="delete_row",
+    header_name="Delete Row",
     onCellClicked=js_remove_row,
     cellRenderer=cellRenderer_removeButton,
     lockPosition='right',
@@ -96,7 +98,16 @@ gb_dump.configure_column(
     autoHeight=True
 )
 gb_dump.configure_column(
-    field="Add row",
+    field="not_relevant",
+    header_name="Not Relevant",
+    type=["string"],
+    wrapHeaderText=True,
+    wrapText=True,
+    autoHeight=True
+)
+gb_dump.configure_column(
+    field="add_row",
+    header_name="Add Row",
     onCellClicked=js_add_row,
     cellRenderer=cellRenderer_addButton,
     lockPosition='right',
@@ -105,7 +116,8 @@ gb_dump.configure_column(
     autoHeight=True
 )
 gb_dump.configure_column(
-    field="Delete row",
+    field="delete_row",
+    header_name="Delete Row",
     onCellClicked=js_remove_row,
     cellRenderer=cellRenderer_removeButton,
     lockPosition='right',

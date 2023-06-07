@@ -10,10 +10,17 @@ from st_aggrid import (
 from gridoptions import go, go_dump
 
 st.set_page_config(layout="wide")
-data_df = pd.DataFrame({"abc":[" "], "xyz": [" "], "efg": [" "]})
-data_dump_df = pd.DataFrame(
-    {"anecdotal":[" "], "too_old": [" "], "redundant":[" "], "outliers": [" "]}
-)
+data_df = pd.DataFrame({
+    "analytical_statement":[" "],
+    "comp_prev_months": [" "],
+    "evidence": [" "]
+})
+data_dump_df = pd.DataFrame({
+    "anecdotal":[" "],
+    "too_old": [" "],
+    "redundant":[" "],
+    "outliers": [" "]
+})
 
 with st.form("summ_tagging", clear_on_submit=True):
     project_options = ["ProjectE", "ProjectB", "ProjectC", "ProjectR"]
@@ -48,6 +55,9 @@ with st.form("summ_tagging", clear_on_submit=True):
     #st.dataframe(response["data"])
     # selected_rows = response["selected_rows"]
     # st.write(selected_rows)
+
+    st.subheader("Data Dump")
+
     response_dump = AgGrid(
         data_dump_df,
         gridOptions=go_dump,
