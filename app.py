@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from st_aggrid import (
     AgGrid,
     GridUpdateMode,
@@ -8,6 +9,9 @@ from st_aggrid import (
     DataReturnMode
 )
 from gridoptions import go, go_dump
+
+def filter_lst(lst):
+    return list(filter(lambda x: x != " " and x != "nan", lst))
 
 st.set_page_config(layout="wide")
 data_df = pd.DataFrame({
@@ -19,7 +23,8 @@ data_dump_df = pd.DataFrame({
     "anecdotal":[" "],
     "too_old": [" "],
     "redundant":[" "],
-    "outliers": [" "]
+    "outliers": [" "],
+    "not_relevant": [" "]
 })
 
 with st.form("summ_tagging", clear_on_submit=True):
@@ -78,9 +83,33 @@ with st.form("summ_tagging", clear_on_submit=True):
 
     if submit_btn:
         st.write("Submitted")
-        st.dataframe(response["data"])
-        st.write(response.keys())
+        #st.dataframe(response["data"])
+        #st.write(response.keys())
         #st.experimental_rerun()
+        first_df = response["data"]
+        first_df['analytical_statement'] = first_df['analytical_statement'].replace('nan', pd.NA).ffill()
+        st.write(first_df)
+        df11 = first_df.groupby("analytical_statement")["evidence"].apply(list)
+        st.write(df11.to_json())
+        st.write("***")
+        st.write(df11)
+        st.write("******")
+
+        # dump data
+        second_df = response_dump["data"]
+        anecdotal_lst = filter_lst(second_df["anecdotal"].tolist())
+        too_old_lst = filter_lst(second_df["too_old"].tolist())
+        redundant_lst = filter_lst(second_df["redundant"].tolist())
+        outliers_lst = filter_lst(second_df["outliers"].tolist())
+        not_relevant_lst = filter_lst(second_df["not_relevant"].tolist())
+
+        st.write(anecdotal_lst)
+        st.write(too_old_lst)
+        st.write(redundant_lst)
+        st.write(outliers_lst)
+        st.write(not_relevant_lst)
+        
+
 
 
 #st.write(response_dump)
