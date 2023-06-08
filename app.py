@@ -1,6 +1,7 @@
+import json
+import uuid
 import streamlit as st
 import pandas as pd
-import numpy as np
 from st_aggrid import (
     AgGrid,
     GridUpdateMode,
@@ -9,8 +10,10 @@ from st_aggrid import (
     DataReturnMode
 )
 from gridoptions import go, go_dump
+from db_handler import write_to_db
 
 def filter_lst(lst):
+    """ Filters out whitespace or nan items """
     return list(filter(lambda x: x != " " and x != "nan", lst))
 
 st.set_page_config(layout="wide")
@@ -56,11 +59,6 @@ with st.form("summ_tagging", clear_on_submit=True):
         reload_data=True
     )
 
-    # st.write(response)
-    #st.dataframe(response["data"])
-    # selected_rows = response["selected_rows"]
-    # st.write(selected_rows)
-
     st.subheader("Data Dump")
 
     response_dump = AgGrid(
@@ -77,23 +75,35 @@ with st.form("summ_tagging", clear_on_submit=True):
         reload_data=True
     )
 
-    other_info = st.text_input("Other Info", help="Provide extra details if any")
+    other_info = st.text_input("Other Information", help="Provide extra details if any")
 
     submit_btn = st.form_submit_button("Submit")
 
     if submit_btn:
-        st.write("Submitted")
-        #st.dataframe(response["data"])
-        #st.write(response.keys())
-        #st.experimental_rerun()
         first_df = response["data"]
         first_df['analytical_statement'] = first_df['analytical_statement'].replace('nan', pd.NA).ffill()
         st.write(first_df)
-        df11 = first_df.groupby("analytical_statement")["evidence"].apply(list)
-        st.write(df11.to_json())
-        st.write("***")
-        st.write(df11)
-        st.write("******")
+        df_as_ev = first_df.groupby("analytical_statement")["evidence"].apply(list)
+        df_as_cpm = first_df.groupby("analytical_statement")["comp_prev_months"].apply(list)
+        
+        as_ev_dict = json.loads(df_as_ev.to_json())
+        as_cpm_dict = json.loads(df_as_cpm.to_json())
+
+        for key, val in as_ev_dict.items():
+            as_ev_dict[key] = filter_lst(val)
+        
+        for key, val in as_cpm_dict.items():
+            as_cpm_dict[key] = filter_lst(val)
+
+        summaries_lst = []
+        for key, val in as_ev_dict.items():
+            summaries_lst.append(
+                {
+                    "analytical_statement": key,
+                    "evidence": val,
+                    "comp_with_prev_month": as_cpm_dict[key] if key in as_cpm_dict else []
+                }
+            )
 
         # dump data
         second_df = response_dump["data"]
@@ -103,29 +113,29 @@ with st.form("summ_tagging", clear_on_submit=True):
         outliers_lst = filter_lst(second_df["outliers"].tolist())
         not_relevant_lst = filter_lst(second_df["not_relevant"].tolist())
 
-        st.write(anecdotal_lst)
-        st.write(too_old_lst)
-        st.write(redundant_lst)
-        st.write(outliers_lst)
-        st.write(not_relevant_lst)
-        
-
-
-
-#st.write(response_dump)
-
-
-
-# if len(selected_rows):
-#     st.markdown('#### Selected')
-#     dfs = pd.DataFrame(selected_rows)
-
-#     dfsnet = dfs.drop(columns=['_selectedRowNodeInfo'])
-#     st.dataframe(dfsnet)
-#     # AgGrid(
-#     #     dfsnet,
-#     #     enable_enterprise_modules=False,
-#     #     columns_auto_size_mode=ColumnsAutoSizeMode.FIT_ALL_COLUMNS_TO_VIEW,
-#     #     reload_data=True,
-#     #     key='product_selected'
-#     # )
+        main_dict = {
+            "summ_key": str(uuid.uuid1()),
+            "project_id": selected_project,
+            "sectors": sectors,
+            "pillars": pillars,
+            "subpillars": subpillars,
+            "other_tags": othertags,
+            "published_on": str(published_date),
+            "summaries": json.dumps(summaries_lst),
+            "anecdotal": json.dumps(anecdotal_lst),
+            "too_old": json.dumps(too_old_lst),
+            "redundant": json.dumps(redundant_lst),
+            "outliers": json.dumps(outliers_lst),
+            "not_relevant": json.dumps(not_relevant_lst),
+            "other_info": other_info
+        }
+        # Handle the database
+        db_response = write_to_db(main_dict)
+        if ("ResponseMetadata" in db_response and
+                "HTTPStatusCode" in db_response["ResponseMetadata"]):
+            if db_response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+                st.success("Successfully updated the database.")
+            else:
+                st.error("Failed to update the database.")
+        else:
+            st.error("Failed to update the database.")
