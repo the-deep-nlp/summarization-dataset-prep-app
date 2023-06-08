@@ -82,7 +82,7 @@ with st.form("summ_tagging", clear_on_submit=True):
     if submit_btn:
         first_df = response["data"]
         first_df['analytical_statement'] = first_df['analytical_statement'].replace('nan', pd.NA).ffill()
-        st.write(first_df)
+
         df_as_ev = first_df.groupby("analytical_statement")["evidence"].apply(list)
         df_as_cpm = first_df.groupby("analytical_statement")["comp_prev_months"].apply(list)
         
