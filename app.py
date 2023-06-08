@@ -11,6 +11,7 @@ from st_aggrid import (
 )
 from gridoptions import go, go_dump
 from db_handler import write_to_db
+from constants import VERSION
 
 def filter_lst(lst):
     """ Filters out whitespace or nan items """
@@ -127,7 +128,8 @@ with st.form("summ_tagging", clear_on_submit=True):
             "redundant": json.dumps(redundant_lst),
             "outliers": json.dumps(outliers_lst),
             "not_relevant": json.dumps(not_relevant_lst),
-            "other_info": other_info
+            "other_info": other_info,
+            "version": VERSION
         }
         # Handle the database
         db_response = write_to_db(main_dict)
