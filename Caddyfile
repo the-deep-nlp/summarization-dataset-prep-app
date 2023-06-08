@@ -1,0 +1,9 @@
+{
+    email nlp@thedeep.io
+}
+
+summarization-dataset.labs.thedeep.io {
+    reverse_proxy server:8501 {
+        header_up X-Forwarded-Proto https
+    }
+}
