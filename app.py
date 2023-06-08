@@ -10,8 +10,12 @@ from st_aggrid import (
     DataReturnMode
 )
 from gridoptions import go, go_dump
-from db_handler import write_to_db
-from constants import VERSION
+from db_handler import write_to_db, download_data
+from constants import (
+    VERSION,
+    DB_TABLE_NAME,
+    AWS_REGION_NAME
+)
 
 def filter_lst(lst):
     """ Filters out whitespace or nan items """
@@ -30,6 +34,13 @@ data_dump_df = pd.DataFrame({
     "outliers": [" "],
     "not_relevant": [" "]
 })
+
+data_download_btn = st.sidebar.button("Generate Download link")
+if data_download_btn:
+    st.sidebar.markdown(
+        download_data(),
+        unsafe_allow_html=True
+    )
 
 with st.form("summ_tagging", clear_on_submit=True):
     project_options = ["ProjectE", "ProjectB", "ProjectC", "ProjectR"]
@@ -132,7 +143,7 @@ with st.form("summ_tagging", clear_on_submit=True):
             "version": VERSION
         }
         # Handle the database
-        db_response = write_to_db(main_dict)
+        db_response = write_to_db(main_dict, table_name=DB_TABLE_NAME, region_name=AWS_REGION_NAME)
         if ("ResponseMetadata" in db_response and
                 "HTTPStatusCode" in db_response["ResponseMetadata"]):
             if db_response["ResponseMetadata"]["HTTPStatusCode"] == 200:
