@@ -70,7 +70,7 @@ def retrieve_db_data(prev_or_next, limit):
         )
     return response
 
-def get_db_data(limit=1, prev_or_next=1):
+def get_db_data(limit=10, prev_or_next=1):
     """
     Get data from the database
     """
