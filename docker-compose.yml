@@ -11,8 +11,6 @@ services:
     volumes:
       - .:/code
       - $HOME/.aws/credentials:/root/.aws/credentials:ro
-    env_file:
-      - .env
     restart: unless-stopped
   caddy:
     image: caddy:2
