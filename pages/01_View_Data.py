@@ -38,3 +38,5 @@ if next_btn:
         df = pd.DataFrame(data)
         if not df.empty:
             st.dataframe(df, use_container_width=True)
+
+st.write("Note: Showing a maximum of 10 items per page.")

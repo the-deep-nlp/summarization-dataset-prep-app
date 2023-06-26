@@ -46,7 +46,16 @@ if data_download_btn:
 guidelines()
 
 with st.form("summ_tagging", clear_on_submit=True):
-    project_options = ["ProjectE", "ProjectB", "ProjectC", "ProjectR"]
+    project_options = [
+        "Bangladesh",
+        "Burkina Faso",
+        "Columbia",
+        "DRC",
+        "Nigeria",
+        "Syria",
+        "Ukraine"
+    ]
+    project_options.sort() # sort in asc
     selected_project = st.selectbox("Projects", project_options)
 
     sectors_col, pillars_col, subpillars_col, other_tags = st.columns(4)
